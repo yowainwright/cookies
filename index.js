@@ -328,14 +328,16 @@ function hmac (algorithm, key, data, encoding) {
     })
 }
 
+// Constant-time comparison, preserves compatibility w/ package.json[engines][node]
+// adapted from https://github.com/crypto-utils/keygrip
 function constantTimeCompare (a, b) {
   var sa = String(a)
   var sb = String(b)
-  var key = crypto.pseudoRandomBytes(32)
+  var key = crypto.randomBytes(32)
   var ah = crypto.createHmac('sha256', key).update(sa).digest()
   var bh = crypto.createHmac('sha256', key).update(sb).digest()
 
-  return bufferEqual(ah, bh) && a === b
+  return bufferEqual(ah, bh)
 }
 
 function bufferEqual (a, b) {
